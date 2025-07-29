@@ -322,6 +322,48 @@
             transform: none;
             box-shadow: none;
         }
+
+        /* Admin badge styling */
+        .admin-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search and filter styles */
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            width: 200px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .booking-item-admin {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50 p-4">
@@ -401,6 +443,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     <span id="currentUserDisplay" class="font-semibold text-gray-700"></span>
+                    <span id="adminBadge" class="admin-badge hidden">Admin</span>
                 </div>
                 
                 <div class="flex items-center gap-2">
@@ -425,7 +468,7 @@
                     id="manageBookingsBtn"
                     class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors font-medium"
                 >
-                    Manage Bookings
+                    <span id="manageBookingsText">Manage Bookings</span>
                 </button>
 
                 <button
@@ -615,11 +658,11 @@
             </div>
         </div>
 
-        <!-- Cancellation Menu Modal -->
+        <!-- Enhanced Cancellation/Management Modal for Admin -->
         <div id="cancellationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
-            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-semibold">Your Bookings</h3>
+                    <h3 id="modalTitle" class="text-xl font-semibold">Your Bookings</h3>
                     <button id="closeCancellationBtn" class="text-gray-500 hover:text-gray-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -627,8 +670,46 @@
                     </button>
                 </div>
                 
+                <!-- Admin Controls (shown only for admin) -->
+                <div id="adminControls" class="mb-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200 hidden">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="font-semibold text-orange-800">Admin Controls</span>
+                        </div>
+                        
+                        <input
+                            type="text"
+                            id="searchUser"
+                            placeholder="Search by user name..."
+                            class="search-input"
+                        />
+                        
+                        <select id="filterDate" class="filter-select">
+                            <option value="">All Dates</option>
+                        </select>
+                        
+                        <select id="filterUser" class="filter-select">
+                            <option value="">All Users</option>
+                        </select>
+                        
+                        <button id="clearFiltersBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 transition-colors">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+                
                 <div id="bookingsList" class="space-y-3 max-h-96 overflow-y-auto">
                     <!-- Bookings will be populated here -->
+                </div>
+                
+                <div id="noBookingsMessage" class="text-gray-500 text-center py-8 font-medium hidden">
+                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"/>
+                    </svg>
+                    <p>No bookings found</p>
                 </div>
             </div>
         </div>
@@ -651,7 +732,7 @@
         // Modify this list to add/remove/update users
         // Format: { username: 'string', password: 'string', displayName: 'string', role: 'user'|'admin' }
         const REGISTERED_USERS = [
-                      { username: 'Admin', password: 'Japantop97162', displayName: 'Admin', role: 'admin' },
+            { username: 'Admin', password: 'Japantop97162', displayName: 'Admin', role: 'admin' },
             { username: 'satru1', password: 'satru1667', displayName: 'Satria U.', role: 'user' },
 { username: 'ped9h1', password: 'ped9h1641', displayName: 'Dedi P.', role: 'user' },
 { username: 'irwkn3', password: 'irwkn3429', displayName: 'Irwan', role: 'user' },
@@ -765,6 +846,13 @@
         let clickStartX = 0;
         let clickStartY = 0;
 
+        // Filter state for admin
+        let currentFilters = {
+            searchUser: '',
+            filterDate: '',
+            filterUser: ''
+        };
+
         // Authentication functions
         function authenticateUser(username, password) {
             const user = REGISTERED_USERS.find(u => 
@@ -812,6 +900,13 @@
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('currentUserDisplay').textContent = currentUser.displayName;
+                
+                // Show admin badge if user is admin
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminBadge').classList.remove('hidden');
+                    document.getElementById('manageBookingsText').textContent = 'Manage All Bookings';
+                }
+                
                 initialize();
             } else {
                 errorDiv.textContent = 'Invalid username or password';
@@ -1145,7 +1240,7 @@
             const dayBookings = bookings[selectedDate] || {};
             const isBooked = dayBookings[desk.id];
 
-            if (isBooked && isBooked.userName !== currentUser.displayName) {
+            if (isBooked && isBooked.userName !== currentUser.displayName && currentUser.role !== 'admin') {
                 showNotification('This desk is already booked by someone else', 'error');
                 return;
             }
@@ -1215,12 +1310,13 @@
                 });
         }
 
-        // Get user bookings (including all dates)
+        // Get user bookings (including all dates) - Enhanced for Admin
         function getAllUserBookings() {
             const userBookings = [];
             Object.entries(bookings).forEach(([date, dayBookings]) => {
                 Object.entries(dayBookings).forEach(([deskId, booking]) => {
-                    if (booking.userName === currentUser.displayName) {
+                    // For admin, show all bookings; for users, show only their bookings
+                    if (currentUser.role === 'admin' || booking.userName === currentUser.displayName) {
                         userBookings.push({ date, deskId, booking });
                     }
                 });
@@ -1228,32 +1324,115 @@
             return userBookings.sort((a, b) => a.date.localeCompare(b.date));
         }
 
-        // Show cancellation modal
+        // Apply filters for admin view
+        function applyFilters(bookingsList) {
+            return bookingsList.filter(({ date, deskId, booking }) => {
+                // Search filter
+                if (currentFilters.searchUser && 
+                    !booking.userName.toLowerCase().includes(currentFilters.searchUser.toLowerCase())) {
+                    return false;
+                }
+                
+                // Date filter
+                if (currentFilters.filterDate && date !== currentFilters.filterDate) {
+                    return false;
+                }
+                
+                // User filter
+                if (currentFilters.filterUser && booking.userName !== currentFilters.filterUser) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+
+        // Populate filter dropdowns
+        function populateFilterDropdowns() {
+            if (currentUser.role !== 'admin') return;
+            
+            const allBookings = getAllUserBookings();
+            
+            // Populate date filter
+            const dateFilter = document.getElementById('filterDate');
+            const uniqueDates = [...new Set(allBookings.map(b => b.date))].sort();
+            dateFilter.innerHTML = '<option value="">All Dates</option>';
+            uniqueDates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateFilter.appendChild(option);
+            });
+            
+            // Populate user filter
+            const userFilter = document.getElementById('filterUser');
+            const uniqueUsers = [...new Set(allBookings.map(b => b.booking.userName))].sort();
+            userFilter.innerHTML = '<option value="">All Users</option>';
+            uniqueUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user;
+                option.textContent = user;
+                userFilter.appendChild(option);
+            });
+        }
+
+        // Show enhanced cancellation modal
         function showCancellationModal() {
-            const userBookings = getAllUserBookings();
+            const isAdmin = currentUser.role === 'admin';
+            let userBookings = getAllUserBookings();
+            
+            // Set modal title based on user role
+            const modalTitle = document.getElementById('modalTitle');
+            modalTitle.textContent = isAdmin ? 'Manage All Bookings' : 'Your Bookings';
+            
+            // Show/hide admin controls
+            const adminControls = document.getElementById('adminControls');
+            if (isAdmin) {
+                adminControls.classList.remove('hidden');
+                populateFilterDropdowns();
+            } else {
+                adminControls.classList.add('hidden');
+            }
+            
+            // Apply filters if admin
+            if (isAdmin) {
+                userBookings = applyFilters(userBookings);
+            }
+            
             const bookingsList = document.getElementById('bookingsList');
+            const noBookingsMessage = document.getElementById('noBookingsMessage');
             
             if (userBookings.length === 0) {
-                bookingsList.innerHTML = `<p class="text-gray-500 text-center py-4 font-medium">No bookings found</p>`;
+                bookingsList.innerHTML = '';
+                noBookingsMessage.classList.remove('hidden');
             } else {
+                noBookingsMessage.classList.add('hidden');
                 bookingsList.innerHTML = userBookings.map(({ date, deskId, booking }) => {
                     const desk = desks.find(d => d.id === deskId);
                     const isToday = date === selectedDate;
                     const bookingTime = booking.bookingTime ? new Date(booking.bookingTime).toLocaleString() : 'Unknown';
+                    const isCurrentUserBooking = booking.userName === currentUser.displayName;
+                    const cardClass = isAdmin && !isCurrentUserBooking ? 'booking-item-admin' : '';
                     
                     return `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                            <div>
-                                <p class="font-semibold">Desk ${deskId} ${isToday ? '(Today)' : ''}</p>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md ${cardClass}">
+                            <div class="flex-1">
+                                <p class="font-semibold flex items-center gap-2">
+                                    Desk ${deskId} 
+                                    ${isToday ? '<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
+                                    ${isAdmin && !isCurrentUserBooking ? '<span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">Other User</span>' : ''}
+                                </p>
                                 <p class="text-sm text-gray-600 font-medium">${desk ? desk.location : 'Unknown Location'}</p>
+                                <p class="text-xs text-gray-500 font-medium">User: ${booking.userName}</p>
                                 <p class="text-xs text-gray-500 font-medium">Date: ${date}</p>
                                 <p class="text-xs text-gray-500 font-medium">Booked: ${bookingTime}</p>
                             </div>
                             <button
-                                onclick="handleCancelBookingForDate('${deskId}', '${date}')"
+                                onclick="handleCancelBookingForDate('${deskId}', '${date}', '${booking.userName}')"
                                 class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors font-medium"
+                                title="${isAdmin && !isCurrentUserBooking ? 'Cancel as Admin' : 'Cancel Booking'}"
                             >
-                                Cancel
+                                ${isAdmin && !isCurrentUserBooking ? 'Admin Cancel' : 'Cancel'}
                             </button>
                         </div>
                     `;
@@ -1263,16 +1442,26 @@
             document.getElementById('cancellationModal').classList.remove('hidden');
         }
 
-        // Handle cancel booking for specific date
-        window.handleCancelBookingForDate = function(deskId, date) {
+        // Handle cancel booking for specific date - Enhanced for Admin
+        window.handleCancelBookingForDate = function(deskId, date, userName) {
             if (!isConnected) {
                 showNotification('Cannot cancel booking - Not connected to Database..', 'error');
                 return;
             }
 
+            // Show confirmation for admin cancelling other users' bookings
+            if (currentUser.role === 'admin' && userName !== currentUser.displayName) {
+                if (!confirm(`Are you sure you want to cancel ${userName}'s booking for desk ${deskId} on ${date}?`)) {
+                    return;
+                }
+            }
+
             database.ref(`bookings/${date}/${deskId}`).remove()
                 .then(() => {
-                    showNotification(`Booking for desk ${deskId} on ${date} cancelled successfully`);
+                    const message = currentUser.role === 'admin' && userName !== currentUser.displayName 
+                        ? `Admin cancelled ${userName}'s booking for desk ${deskId} on ${date}`
+                        : `Booking for desk ${deskId} on ${date} cancelled successfully`;
+                    showNotification(message);
                     showCancellationModal(); // Refresh the list
                 })
                 .catch((error) => {
@@ -1284,6 +1473,49 @@
         // Hide cancellation modal
         function hideCancellationModal() {
             document.getElementById('cancellationModal').classList.add('hidden');
+            // Reset filters
+            currentFilters = {
+                searchUser: '',
+                filterDate: '',
+                filterUser: ''
+            };
+        }
+
+        // Setup admin filter event listeners
+        function setupAdminFilters() {
+            if (currentUser.role !== 'admin') return;
+            
+            const searchInput = document.getElementById('searchUser');
+            const dateFilter = document.getElementById('filterDate');
+            const userFilter = document.getElementById('filterUser');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            
+            // Search filter
+            searchInput.addEventListener('input', (e) => {
+                currentFilters.searchUser = e.target.value;
+                showCancellationModal();
+            });
+            
+            // Date filter
+            dateFilter.addEventListener('change', (e) => {
+                currentFilters.filterDate = e.target.value;
+                showCancellationModal();
+            });
+            
+            // User filter
+            userFilter.addEventListener('change', (e) => {
+                currentFilters.filterUser = e.target.value;
+                showCancellationModal();
+            });
+            
+            // Clear filters
+            clearFiltersBtn.addEventListener('click', () => {
+                currentFilters = { searchUser: '', filterDate: '', filterUser: '' };
+                searchInput.value = '';
+                dateFilter.value = '';
+                userFilter.value = '';
+                showCancellationModal();
+            });
         }
 
         // Export data function (for Admin only)
@@ -1556,6 +1788,11 @@
             document.getElementById('closeCancellationBtn').addEventListener('click', hideCancellationModal);
             document.getElementById('refreshBtn').addEventListener('click', refreshData);
 
+            // Setup admin filters if user is admin
+            if (currentUser.role === 'admin') {
+                setupAdminFilters();
+            }
+
             // Close modals when clicking outside
             document.getElementById('bookingModal').addEventListener('click', (e) => {
                 if (e.target === document.getElementById('bookingModal')) {
@@ -1592,6 +1829,13 @@
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('currentUserDisplay').textContent = currentUser.displayName;
+                
+                // Show admin badge if user is admin
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminBadge').classList.remove('hidden');
+                    document.getElementById('manageBookingsText').textContent = 'Manage All Bookings';
+                }
+                
                 initialize();
             }
         });
