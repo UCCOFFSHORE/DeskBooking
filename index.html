@@ -53,12 +53,33 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+	    overflow: hidden;
+    	    position: relative;
         }
         
         #svgContainer.dragging {
             cursor: grabbing;
+	    overflow: hidden;
         }
-        
+
+    #svgContainer:not(.dragging) {
+    cursor: default;        
+}
+
+.office-layout-container {
+    overflow: auto;
+    max-height: 70vh; /* Limit height to prevent full page capture */
+    position: relative;
+}
+
+#svgContainer svg {
+    pointer-events: auto;
+}
+
+.desk-element {
+    pointer-events: auto;
+}
+
         .svg-text {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 12px;
@@ -569,28 +590,160 @@
                         
                         <!-- Office areas labels -->
                         <text x="400" y="85" text-anchor="middle" class="svg-text-big" fill="#374151"> SANDYAKALA </text>
-                        <text x="400" y="105" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room  </text>
-                        <text x="200" y="75" text-anchor="middle" class="svg-text-big" fill="#374151"> SWASTAMITA </text>
-                        <text x="200" y="95" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
-                        <text x="50" y="55" text-anchor="middle" class="svg-text-medium" fill="#374151"> Praying Room </text>
-                        <text x="50" y="75" text-anchor="middle" class="svg-text-medium" fill="#374151"> Musholla </text>
-                        <text x="120" y="350" text-anchor="middle" class="svg-text-big" fill="#374151"> PANTRY  </text>
-                        <text x="120" y="370" text-anchor="middle" class="svg-text-medium" fill="#374151"> Breakout Room </text>
-                        <text x="1150" y="460" text-anchor="middle" class="svg-text-medium" fill="#374151"> Photo Copy/Printer </text>
-                        <text x="1570" y="60" text-anchor="middle" class="svg-text-medium" fill="#374151">  Photo Copy </text>
-                        <text x="1570" y="80" text-anchor="middle" class="svg-text-medium" fill="#374151">  Printer </text>
-                        <text x="600" y="100" text-anchor="middle" class="svg-text-big" fill="#374151"> ARUNIKA  </text>
-                        <text x="600" y="120" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
-                        <text x="470" y="630" text-anchor="middle" class="svg-text-big" fill="#374151">  RENJANA  </text>
-                        <text x="470" y="650" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
-                        <text x="320" y="630" text-anchor="middle" class="svg-text-big" fill="#374151"> SAUJANA </text>
-                        <text x="320" y="650" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
-                        <text x="200" y="600" text-anchor="middle" class="svg-text-medium" fill="#374151"> Photo Copy </text>
-                        <text x="200" y="640" text-anchor="middle" class="svg-text-medium" fill="#374151"> Plotter </text>
-                        <text x="560" y="440" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
-                        <text x="460" y="440" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
-                        <text x="460" y="340" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
-                        <text x="560" y="340" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
+                <text x="400" y="105" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room  </text>
+                <text x="200" y="75" text-anchor="middle" class="svg-text-big" fill="#374151"> SWASTAMITA </text>
+              <text x="200" y="95" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
+                <text x="50" y="55" text-anchor="middle" class="svg-text-medium" fill="#374151"> Praying Room </text>
+                <text x="50" y="75" text-anchor="middle" class="svg-text-medium" fill="#374151"> Musholla </text>
+                <text x="120" y="350" text-anchor="middle" class="svg-text-big" fill="#374151"> PANTRY  </text>
+                <text x="120" y="370" text-anchor="middle" class="svg-text-medium" fill="#374151"> Breakout Room </text>
+                <text x="1150" y="460" text-anchor="middle" class="svg-text-medium" fill="#374151"> Photo Copy/Printer </text>
+                <text x="1580" y="60" text-anchor="middle" class="svg-text-small" fill="#374151">  Photo Copy </text>
+                <text x="1585" y="80" text-anchor="middle" class="svg-text-small" fill="#374151">  Printer </text>
+                <text x="600" y="100" text-anchor="middle" class="svg-text-big" fill="#374151"> ARUNIKA  </text>
+                <text x="600" y="120" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
+                <text x="510" y="700" text-anchor="middle" class="svg-text-big" fill="#374151">  RENJANA  </text>
+                <text x="510" y="720" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
+                <text x="400" y="700" text-anchor="middle" class="svg-text-big" fill="#374151"> SAUJANA </text>
+                <text x="400" y="720" text-anchor="middle" class="svg-text-medium" fill="#374151"> Meeting Room </text>
+                <text x="200" y="600" text-anchor="middle" class="svg-text-medium" fill="#374151"> Photo Copy </text>
+                <text x="200" y="640" text-anchor="middle" class="svg-text-medium" fill="#374151"> Plotter </text>
+                <text x="560" y="440" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
+                <text x="460" y="440" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
+                <text x="460" y="340" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
+                <text x="560" y="340" text-anchor="middle" class="svg-text-big" fill="#374151"> LIFT </text>
+<!-- visual ruangan kotak (kanan)-->
+<rect x="1600" y="650" width="200" height="260" 
+                      fill="none" 
+                      stroke="#2563eb" 
+                      stroke-width="3" 
+                      stroke-dasharray="8,4" 
+                      rx="8"/>
+
+<rect x="1600" y="450" width="200" height="200" 
+                      fill="none" 
+                      stroke="#2563eb" 
+                      stroke-width="3" 
+                      stroke-dasharray="8,4" 
+                      rx="8"/>
+
+<rect x="1600" y="250" width="200" height="200" 
+                      fill="none" 
+                      stroke="#2563eb" 
+                      stroke-width="3" 
+                      stroke-dasharray="8,4" 
+                      rx="8"/>
+
+<rect x="1600" y="75" width="200" height="175" 
+                      fill="none" 
+                      stroke="#2563eb" 
+                      stroke-width="3" 
+                      stroke-dasharray="8,4" 
+                      rx="8"/>
+
+
+<!-- visual jajaran genjang (atas) dari si Ian C. -->
+                <polygon points="1440,45 1560,65 1560,220 1440,215" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<polygon points="1320,29 1440,45 1440,215 1320,205" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<polygon points="1200,15 1440,45 1440,215 1200,200" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<polygon points="1080,1 1440,45 1440,215 1080,195" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<polygon points="960,-2 1080,-2 1080,195 960,190" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<polygon points="840,-2 1080,-2 1080,195 840,185" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+<!-- visual jajaran genjang (bawah) dari Chris R. -->
+                <polygon points="1350,765 1460,755 1460,940 1350,960" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="1220,775 1350,765 1350,960 1220,980" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="1090,785 1220,775 1220,980 1090,1000" 
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="960,795 1090,785 1090,1000 960,1020"
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="480,850 960,795 960,1020 480,1100"
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="290,870 480,850 480,1100 290,1130"
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="80,890 290,870 290,1130 80,1160"
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+                <polygon points="80,670 250,670 250,875 80,890"
+                         fill="none" 
+                         stroke="#2563eb" 
+                         stroke-width="3" 
+                         stroke-dasharray="10,5" 
+                         opacity="0.8"/>
+
+
+
                     </svg>
                 </div>
                 
@@ -732,7 +885,6 @@
         // Modify this list to add/remove/update users
         // Format: { username: 'string', password: 'string', displayName: 'string', role: 'user'|'admin' }
         const REGISTERED_USERS = [
-            { username: 'Admin', password: 'Japantop97162', displayName: 'Admin', role: 'admin' },
             { username: 'Admin', password: 'Japantop97162', displayName: 'Admin', role: 'admin' },
             { username: 'satru1', password: 'satru1667', displayName: 'Satria U.', role: 'user' },
 { username: 'deperm', password: 'deperm641', displayName: 'Dedi P.', role: 'user' },
@@ -922,19 +1074,19 @@
         function generateDeskLayout() {
             const desks = [];
             const areas = [
-                { name: 'Hot Room', prefix: 'HotRoom', count: 1, startX: 890, startY: 10 },
-                { name: 'Satria Utama', prefix: 'Satria', count: 1, startX: 1000, startY: 20 },
+                { name: 'Hot Room', prefix: 'HotRoom', count: 1, startX: 870, startY: 20 },
+                { name: 'Satria Utama', prefix: 'Satria', count: 1, startX: 980, startY: 40 },
                 { name: 'Dedi Permadi', prefix: 'Dedi P', count: 1, startX: 1120, startY: 30 },
                 { name: 'Irwan Kemas', prefix: 'Irwan', count: 1, startX: 1100, startY: 120 },
                 { name: 'Adhi Purboyo', prefix: 'Adhi P', count: 1, startX: 1240, startY: 40 },
                 { name: 'M.Umar Rofik', prefix: 'Rofik', count: 1, startX: 1220, startY: 130 },
                 { name: 'Alastair Livingston', prefix: 'Alastair', count: 1, startX: 1360, startY: 50 },
                 { name: 'Mark Burley', prefix: 'Burley', count: 1, startX: 1340, startY: 140 },
-                { name: 'Ian Clarke', prefix: 'Ian C', count: 1, startX: 1480, startY: 120 },
-                { name: 'Muhammad Niza', prefix: 'Niza', count: 1, startX: 1610, startY: 120 },
-                { name: 'Suci Tri Asih B.', prefix: 'Suci', count: 1, startX: 1700, startY: 120 },
-                { name: 'Mulyawan Samad', prefix: 'Mulyawan', count: 1, startX: 1610, startY: 300 },
-                { name: 'Domenico S.Mariatmo', prefix: 'Momo', count: 1, startX: 1700, startY: 300 },
+                { name: 'Ian Clarke', prefix: 'Ian C', count: 1, startX: 1470, startY: 120 },
+                { name: 'Muhammad Niza', prefix: 'Niza', count: 1, startX: 1620, startY: 120 },
+                { name: 'Suci Tri Asih B.', prefix: 'Suci', count: 1, startX: 1720, startY: 120 },
+                { name: 'Mulyawan Samad', prefix: 'Mulyawan', count: 1, startX: 1620, startY: 300 },
+                { name: 'Domenico S.Mariatmo', prefix: 'Momo', count: 1, startX: 1720, startY: 300 },
                 { name: 'Sinta Nursafitri', prefix: 'Sinta', count: 1, startX: 1490, startY: 240 },
                 { name: 'Subagio/M.Rofik', prefix: 'Bagio', count: 1, startX: 1420, startY: 240 },
                 { name: 'Indratmo Prasojo', prefix: 'Indratmo', count: 1, startX: 1490, startY: 320 },
@@ -947,8 +1099,8 @@
                 { name: 'Djoko Sukowijono', prefix: 'Djoko', count: 1, startX: 1420, startY: 560 },
                 { name: 'Zahirul Fadli', prefix: 'Zahirul', count: 1, startX: 1490, startY: 640 },
                 { name: 'Bambang Irawan', prefix: 'Bambang', count: 1, startX: 1420, startY: 640 },
-                { name: 'HotDesk 1', prefix: 'Hotdesk 1', count: 1, startX: 1610, startY: 530 },
-                { name: 'M.Haikal Pasaribu', prefix: 'Haikal', count: 1, startX: 1700, startY: 530 },
+                { name: 'HotDesk 1', prefix: 'Hotdesk 1', count: 1, startX: 1620, startY: 530 },
+                { name: 'M.Haikal Pasaribu', prefix: 'Haikal', count: 1, startX: 1720, startY: 530 },
                 { name: 'James Southward', prefix: 'James', count: 1, startX: 1330, startY: 240 },
                 { name: 'Tonci Ukalovic', prefix: 'Tonci', count: 1, startX: 1260, startY: 240 },
                 { name: 'Mumtaz Ali', prefix: 'Mumtaz', count: 1, startX: 1330, startY: 320 },
@@ -961,25 +1113,25 @@
                 { name: 'Annisa Aviatin', prefix: 'Annisa', count: 1, startX: 1260, startY: 560 },
                 { name: 'Ofaweri Eng1', prefix: 'OFA Eng1', count: 1, startX: 1330, startY: 640 },
                 { name: 'Ofaweri Eng2', prefix: 'OFA Eng2', count: 1, startX: 1260, startY: 640 },
-                { name: 'Ecky Yulistiana', prefix: 'Ecky', count: 1, startX: 1650, startY: 750 },
-                { name: 'Thierza Dwiyanti', prefix: 'Thierza', count: 1, startX: 1510, startY: 750 },
-                { name: 'Jovinka Aldilla', prefix: 'Jovin', count: 1, startX: 1530, startY: 830 },
+                { name: 'Ecky Yulistiana', prefix: 'Ecky', count: 1, startX: 1670, startY: 750 },
+                { name: 'Thierza Dwiyanti', prefix: 'Thierza', count: 1, startX: 1490, startY: 750 },
+                { name: 'Jovinka Aldilla', prefix: 'Jovin', count: 1, startX: 1510, startY: 830 },
                 { name: 'Chris Ruthven', prefix: 'Chris R', count: 1, startX: 1380, startY: 800 },
                 { name: 'Marawan Zakaria', prefix: 'Marawan', count: 1, startX: 1250, startY: 820 },
                 { name: 'Burhan Syafiuddin', prefix: 'Yudi', count: 1, startX: 1120, startY: 840 },
                 { name: 'Anita Juliawatri', prefix: 'Anita', count: 1, startX: 990, startY: 860 },
                 { name: 'Arian Adityantoro', prefix: 'Arian', count: 1, startX: 860, startY: 920 },
-                { name: 'Rachmi Prastiwi', prefix: 'Tiwi', count: 1, startX: 730, startY: 900 },
-                { name: 'Febi Munandar', prefix: 'Febi', count: 1, startX: 710, startY: 990 },
-                { name: 'Mokhamad Rifky', prefix: 'Rifky', count: 1, startX: 630, startY: 920 },
-                { name: 'HotDesk 2', prefix: 'Hotdesk 2', count: 1, startX: 610, startY: 1010 },
+                { name: 'Rachmi Prastiwi', prefix: 'Tiwi', count: 1, startX: 730, startY: 880 },
+                { name: 'Febi Munandar', prefix: 'Febi', count: 1, startX: 710, startY: 970 },
+                { name: 'Mokhamad Rifky', prefix: 'Rifky', count: 1, startX: 630, startY: 900 },
+                { name: 'HotDesk 2', prefix: 'Hotdesk 2', count: 1, startX: 610, startY: 990 },
                 { name: 'Oga Zano', prefix: 'Oga', count: 1, startX: 500, startY: 970 },
-                { name: 'Wayne Cornally', prefix: 'Wayne', count: 1, startX: 380, startY: 940 },
-                { name: 'Hotman Carlo M.', prefix: 'Carlo', count: 1, startX: 300, startY: 1030 },
+                { name: 'Wayne Cornally', prefix: 'Wayne', count: 1, startX: 390, startY: 940 },
+                { name: 'Hotman Carlo M.', prefix: 'Carlo', count: 1, startX: 310, startY: 1030 },
                 { name: 'Arthur McGregor', prefix: 'Arthur', count: 1, startX: 210, startY: 1050 },
                 { name: 'Mick Pyper', prefix: 'Mick', count: 1, startX: 120, startY: 960 },
-                { name: 'Trisnadi Sutrisno', prefix: 'Trisnadi', count: 1, startX: 120, startY: 820 },
-                { name: 'Ariani K.Murdiawati', prefix: 'Ariani', count: 1, startX: 120, startY: 720 },
+                { name: 'Trisnadi Sutrisno', prefix: 'Trisnadi', count: 1, startX: 140, startY: 800 },
+                { name: 'Ariani K.Murdiawati', prefix: 'Ariani', count: 1, startX: 140, startY: 700 },
                 { name: 'Bilal Akbar', prefix: 'Bilal', count: 1, startX: 1140, startY: 600 },
                 { name: 'Ardian Novanda', prefix: 'Ardian', count: 1, startX: 1150, startY: 680 },
                 { name: 'Asep Saepudin', prefix: 'Asep', count: 1, startX: 1060, startY: 610 },
